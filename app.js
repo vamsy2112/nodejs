@@ -1,12 +1,34 @@
-const path = require("path");
+const { readFileSync, writeFileSync, readFile, writeFile } = require("fs");
 
-// gives us the path separator for current OS.
-console.log(path.sep);
+const first = readFileSync("./content/subfolder/text.txt", "utf-8");
+console.log(first);
 
-const filepath = path.join("content", "subfolder", "text.txt");
+readFile("./content/subfolder/text.txt", "utf8", (err, res) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
 
-console.log(filepath);
+  console.log(res);
+  const first = res;
 
-// gives us the absolute path to the file
-const absolute = path.resolve(__dirname, "content", "subfolder", "text.txt");
-console.log(absolute);
+  readFile("./content/subfolder/second.txt", "utf8", (err, res) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log(res);
+    const second = res;
+    writeFile(
+      "./content/subfolder/result.txt",
+      `this is the result of async fs modules: ${first} and ${second}`,
+      (err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        console.log(res);
+      },
+    );
+  });
+});
