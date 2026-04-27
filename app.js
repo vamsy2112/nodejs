@@ -1,34 +1,26 @@
-const { readFileSync, writeFileSync, readFile, writeFile } = require("fs");
+const { writeFile, readFile } = require("fs");
+const util = require("util");
 
-const first = readFileSync("./content/subfolder/text.txt", "utf-8");
-console.log(first);
+const readFilePromise = util.promisify(readFile);
+const writeFilePromise = util.promisify(writeFile);
 
-readFile("./content/subfolder/text.txt", "utf8", (err, res) => {
-  if (err) {
-    console.log(err);
-    return;
-  }
-
-  console.log(res);
-  const first = res;
-
-  readFile("./content/subfolder/second.txt", "utf8", (err, res) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    console.log(res);
-    const second = res;
-    writeFile(
-      "./content/subfolder/result.txt",
-      `this is the result of async fs modules: ${first} and ${second}`,
-      (err, res) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        console.log(res);
-      },
+const start = async () => {
+  try {
+    const first = await readFilePromise("./content/subfolder/text.txt", "utf8");
+    const second = await readFilePromise(
+      "./content/subfolder/second.txt",
+      "utf8",
     );
-  });
-});
+
+    writeFilePromise(
+      "./content/subfolder/result-async-node.txt",
+      `this is awesome: ${first} ; ${second}`,
+    );
+
+    console.log(first, second);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();
